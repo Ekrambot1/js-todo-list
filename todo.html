@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List</title>
+    <style>
+        .clbtn {
+            background-color: red;
+            color: white;
+            height: 30px;
+            width: 80px;
+            border-radius: 10px;
+            margin-right: 5px;
+        }
+
+        .todo {
+            height: auto;
+            background-color: black;
+            color: white;
+            padding: 20px;
+        }
+
+        .todo input[type="text"] {
+            width: 400px;
+            padding: 5px;
+        }
+
+        .todo button {
+            padding: 5px 20px;
+            margin-left: 10px;
+        }
+
+        #show {
+            margin-top: 20px;
+        }
+
+        .get {
+            display: flex;
+            justify-content: center;
+        }
+
+        #show {
+            text-align: center;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .edit-btn {
+            background-color: orange;
+            height: 30px;
+            width: 80px;
+            border-radius: 10px;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Todo List</h1>
+    <div class="todo">
+        <div class="get">
+            <input type="text" id="input" placeholder="Enter your task">
+            <button id="btn">Add</button>
+        </div>
+        <div id="show"></div>
+    </div>
+
+    <script>
+        let button = document.getElementById('btn');
+        let input = document.getElementById('input');
+        let show = document.getElementById('show');
+
+        let todos = [];
+        window.onload = () => {
+            todos = JSON.parse(localStorage.getItem('todos')) || [];
+            todos.forEach(todo => renderTodoList(todo));
+            console.log(todos);
+
+        };
+
+        button.addEventListener('click', () => {
+            if (input.value !== '') {
+                todos.push(input.value);
+                renderTodoList();
+                input.value = '';
+            }
+        });
+
+        function renderTodoList() {
+            show.innerHTML = '';
+
+            todos.forEach((todo, index) => {
+                var todoItem = document.createElement('div');
+                todoItem.classList.add('todo-item');
+
+                var todoText = document.createElement('p');
+                todoText.textContent = todo;
+
+                var editButton = document.createElement('button');
+                editButton.textContent = "Edit";
+                editButton.classList.add('edit-btn');
+
+                var deleteButton = document.createElement('button');
+                deleteButton.textContent = "Delete";
+                deleteButton.classList.add('clbtn');
+
+                editButton.addEventListener('click', () => {
+                    var editText = document.createElement('input');
+                    editText.type = "text";
+                    editText.style.backgroundColor="black";
+                    editText.style.color="white";
+                    editText.value = todo;
+                    editText.addEventListener('keydown', (event) => {
+                        if (event.key === 'Enter') {
+                            todos[index] = editText.value;
+                            renderTodoList();
+                        }
+                    });
+                    todoText.textContent = '';
+                    todoText.appendChild(editText);
+                    editText.focus();
+                });
+
+                deleteButton.addEventListener('click', () => {
+                    todos.splice(index, 1);
+                    renderTodoList();
+                });
+
+
+                deleteButton.addEventListener('click', () => {
+                    todos.splice(index, 1);
+                    renderTodoList();
+                });
+
+                todoItem.appendChild(todoText);
+                todoItem.appendChild(editButton);
+                todoItem.appendChild(deleteButton);
+                show.appendChild(todoItem);
+            });
+
+            localStorage.setItem("todos", JSON.stringify(todos));
+        }
+    </script>
+</body>
+
+</html>
